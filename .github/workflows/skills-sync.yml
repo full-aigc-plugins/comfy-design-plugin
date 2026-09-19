@@ -59,6 +59,7 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin refs/heads/chore/skills-sync:refs/remotes/origin/chore/skills-sync || true
           git checkout -B chore/skills-sync
           git add skills/ skills.lock.json
           git commit -m "chore: sync vendored skills from comfy-skills ${REQUESTED_REF:-current-lock}"
@@ -74,5 +75,4 @@ jobs:
           gh pr create \
             --title "chore: sync vendored Comfy skills ${REQUESTED_REF:-current-lock}" \
             --body "Automated refresh of the checksummed skill snapshot from skills.lock.json. Requested release: ${REQUESTED_REF:-current lock}; expected commit: ${REQUESTED_SHA:-already pinned}. Externally managed skills come from full-aigc-skills/comfy-skills; plugin-local exceptions must be declared in plugin-local-skills.json." \
-            --head chore/skills-sync --base main \
-            --label skills-sync
+            --head chore/skills-sync --base main

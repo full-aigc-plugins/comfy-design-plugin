@@ -5,7 +5,7 @@
   "author": {
     "name": "Full Stack Skills / PartMe.AI"
   },
-  "homepage": "https://github.com/partme-ai/partme-comfy-plugin",
+  "homepage": "https://github.com/full-aigc-plugins/comfy-design-plugin",
   "license": "Apache-2.0",
   "keywords": [
     "comfy",
@@ -17,7 +17,7 @@
     "shortDescription": "Comfy Cloud generation workflows",
     "longDescription": "Operate Comfy Cloud from your coding agent: generate images, video, audio, and 3D, search models, nodes, and templates, and run ComfyUI workflows through the hosted Comfy MCP.",
     "developerName": "Full Stack Skills / PartMe.AI",
-    "websiteURL": "https://github.com/partme-ai/partme-comfy-plugin"
+    "websiteURL": "https://github.com/full-aigc-plugins/comfy-design-plugin"
   },
   "skills": "./skills/",
   "commands": "./commands/",

@@ -15,8 +15,8 @@
     "name": "Full Stack Skills / PartMe.AI",
     "url": "https://github.com/partme-ai"
   },
-  "homepage": "https://github.com/partme-ai/partme-comfy-plugin",
-  "repository": "https://github.com/partme-ai/partme-comfy-plugin",
+  "homepage": "https://github.com/full-aigc-plugins/comfy-design-plugin",
+  "repository": "https://github.com/full-aigc-plugins/comfy-design-plugin",
   "license": "Apache-2.0",
   "keywords": [
     "comfy",

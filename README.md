@@ -103,7 +103,7 @@ comfy launch         # 运行类工具需要 ComfyUI 在跑
 <!-- FULL_STACK_DOC_START -->
 ## 项目定位与运行边界
 
-`comfy-design-plugin` 是面向 Codex、ZCode 与 Kimi 的跨宿主插件。当前基础版本为 `0.1.2`，三个宿主清单分别是 `.codex-plugin/plugin.json`、`.zcode-plugin/plugin.json` 和 `kimi.plugin.json`。README 中的版本、技能数量和安装来源以这些清单、`skills.lock.json` 与正式 Release 为准。
+`comfy-design-plugin` 是面向 Codex、ZCode 与 Kimi 的跨宿主插件。当前基础版本为 `0.1.3`，三个宿主清单分别是 `.codex-plugin/plugin.json`、`.zcode-plugin/plugin.json` 和 `kimi.plugin.json`。README 中的版本、技能数量和安装来源以这些清单、`skills.lock.json` 与正式 Release 为准。
 
 ```text
 宿主请求
@@ -129,9 +129,9 @@ comfy launch         # 运行类工具需要 ComfyUI 在跑
 
 | 宿主 | 清单 | 声明版本 |
 |---|---|---|
-| Codex | `.codex-plugin/plugin.json` | `0.1.2+codex.20260919` |
-| ZCode | `.zcode-plugin/plugin.json` | `0.1.2` |
-| Kimi | `kimi.plugin.json` | `0.1.2` |
+| Codex | `.codex-plugin/plugin.json` | `0.1.3+codex.20260919` |
+| ZCode | `.zcode-plugin/plugin.json` | `0.1.3` |
+| Kimi | `kimi.plugin.json` | `0.1.3` |
 
 | 外部技能包 | Release ref | Peeled SHA | 技能数 |
 |---|---|---|---:|

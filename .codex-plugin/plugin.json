@@ -6,8 +6,8 @@
     "name": "Full Stack Skills / PartMe.AI",
     "url": "https://github.com/partme-ai"
   },
-  "homepage": "https://github.com/partme-ai/partme-comfy-plugin",
-  "repository": "https://github.com/partme-ai/partme-comfy-plugin",
+  "homepage": "https://github.com/full-aigc-plugins/comfy-design-plugin",
+  "repository": "https://github.com/full-aigc-plugins/comfy-design-plugin",
   "license": "Apache-2.0",
   "keywords": [
     "comfy",
@@ -23,7 +23,7 @@
     "longDescription": "Operate Comfy Cloud from Codex: generate images, video, audio, and 3D, search models, nodes, and templates, and run ComfyUI workflows through the hosted Comfy MCP.",
     "developerName": "Full Stack Skills / PartMe.AI",
     "category": "Creativity",
-    "websiteURL": "https://github.com/partme-ai/partme-comfy-plugin",
+    "websiteURL": "https://github.com/full-aigc-plugins/comfy-design-plugin",
     "brandColor": "#F2FF59",
     "composerIcon": "./assets/composer-icon.png",
     "logo": "./assets/official-logo.png",
@@ -33,8 +33,8 @@
       "Read",
       "Write"
     ],
-    "privacyPolicyURL": "https://github.com/partme-ai/partme-comfy-plugin/blob/main/PRIVACY.md",
-    "termsOfServiceURL": "https://github.com/partme-ai/partme-comfy-plugin/blob/main/TERMS.md",
+    "privacyPolicyURL": "https://github.com/full-aigc-plugins/comfy-design-plugin/blob/main/PRIVACY.md",
+    "termsOfServiceURL": "https://github.com/full-aigc-plugins/comfy-design-plugin/blob/main/TERMS.md",
     "defaultPrompt": [
       "Generate an image with a Comfy Cloud workflow and show the result",
       "Search Comfy Cloud models and nodes for my use case",

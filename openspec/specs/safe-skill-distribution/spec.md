@@ -1,7 +1,7 @@
 # safe-skill-distribution Specification
 
 ## Purpose
-TBD - created by archiving change remediate-security-and-skill-boundary. Update Purpose after archive.
+Define a safe, auditable skill distribution that excludes executable social-engineering payloads and preserves provenance.
 ## Requirements
 ### Requirement: Published skills remain in domain
 
@@ -29,4 +29,3 @@ Reusable skills SHALL be managed by an external skill source and plugin-specific
 
 - **WHEN** a directory under `skills/` is neither externally managed nor declared plugin-local
 - **THEN** the vendor check SHALL fail
-

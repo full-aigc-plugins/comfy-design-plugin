@@ -1,6 +1,6 @@
 {
   "name": "comfy-design",
-  "version": "0.1.2+codex.20260919",
+  "version": "0.1.3+codex.20260920",
   "description": "Generate images, video, audio, and 3D, search models and nodes, and run Comfy Cloud workflows through MCP.",
   "author": {
     "name": "Full Stack Skills / PartMe.AI",

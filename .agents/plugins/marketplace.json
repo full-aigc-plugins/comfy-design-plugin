@@ -9,7 +9,7 @@
       "source": {
         "source": "url",
         "url": "https://github.com/partme-ai/partme-comfy-plugin.git",
-        "ref": "main"
+        "ref": "v0.1.2"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -18,11 +18,11 @@
       "category": "Creativity",
       "version": "0.1.2",
       "description": "Generate images, video, audio, and 3D, search models and nodes, and run Comfy Cloud workflows through MCP.",
-      "icon": "https://raw.githubusercontent.com/partme-ai/partme-comfy-plugin/main/assets/official-logo.png",
+      "icon": "https://cdn.jsdelivr.net/gh/full-aigc-plugins/comfy-design-plugin@v0.1.2/assets/official-logo.png",
       "interface": {
         "displayName": "Comfy Design",
         "shortDescription": "Comfy Cloud generation workflows",
-        "logo": "https://raw.githubusercontent.com/partme-ai/partme-comfy-plugin/main/assets/official-logo.png"
+        "logo": "https://cdn.jsdelivr.net/gh/full-aigc-plugins/comfy-design-plugin@v0.1.2/assets/official-logo.png"
       }
     }
   ]

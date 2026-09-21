@@ -24,13 +24,13 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     env:
-      GH_TOKEN: ${{ secrets.SKILLS_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
+      GH_TOKEN: ${{ secrets.FULL_AIGC_SKILLS_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
       REQUESTED_REF: ${{ github.event.client_payload.ref || inputs.ref }}
       REQUESTED_SHA: ${{ github.event.client_payload.sha || inputs.sha }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          token: ${{ secrets.SKILLS_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.FULL_AIGC_SKILLS_SYNC_TOKEN || secrets.GITHUB_TOKEN }}
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"

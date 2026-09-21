@@ -9,7 +9,7 @@ Tri-platform plugin (Codex / ZCode / Kimi Code) that connects coding agents to *
 | Component | Count | Source |
 |---|---|---|
 | Commands | 12 (`/comfy-generate-image`, `/comfy-generate-video`, …) | verbatim from upstream `claude-code/commands/` |
-| Skills | 12 (same topics, model auto-trigger) | verbatim from upstream `skills/`, wrapped in `SKILL.md` frontmatter |
+| Skills | 13 (same topics, model auto-trigger) | 11 verbatim from upstream `skills/`, wrapped in `SKILL.md` frontmatter; 2 plugin-local (`comfy-harness`, `comfy-design-loop`) |
 | MCP | `comfy-cloud` (HTTP, `https://cloud.comfy.org/mcp`) | from upstream comfy-cloud plugin manifest |
 
 Vendored bodies are **unmodified**; only platform packaging (frontmatter, manifests, hooks, commands) is added by this repository.
@@ -103,7 +103,7 @@ comfy launch         # 运行类工具需要 ComfyUI 在跑
 <!-- FULL_STACK_DOC_START -->
 ## 项目定位与运行边界
 
-`comfy-design-plugin` 是面向 Codex、ZCode 与 Kimi 的跨宿主插件。当前基础版本为 `0.1.3`，三个宿主清单分别是 `.codex-plugin/plugin.json`、`.zcode-plugin/plugin.json` 和 `kimi.plugin.json`。README 中的版本、技能数量和安装来源以这些清单、`skills.lock.json` 与正式 Release 为准。
+`comfy-design-plugin` 是面向 Codex、ZCode 与 Kimi 的跨宿主插件。当前基础版本为 `0.2.0`，三个宿主清单分别是 `.codex-plugin/plugin.json`、`.zcode-plugin/plugin.json` 和 `kimi.plugin.json`。README 中的版本、技能数量和安装来源以这些清单、`skills.lock.json` 与正式 Release 为准。
 
 ```text
 宿主请求
@@ -129,15 +129,15 @@ comfy launch         # 运行类工具需要 ComfyUI 在跑
 
 | 宿主 | 清单 | 声明版本 |
 |---|---|---|
-| Codex | `.codex-plugin/plugin.json` | `0.1.3+codex.20260919` |
-| ZCode | `.zcode-plugin/plugin.json` | `0.1.3` |
-| Kimi | `kimi.plugin.json` | `0.1.3` |
+| Codex | `.codex-plugin/plugin.json` | `0.2.0+codex.20260921` |
+| ZCode | `.zcode-plugin/plugin.json` | `0.2.0` |
+| Kimi | `kimi.plugin.json` | `0.2.0` |
 
 | 外部技能包 | Release ref | Peeled SHA | 技能数 |
 |---|---|---|---:|
 | `comfy-skills` | `v0.1.0` | `7d21bb5d279d` | 11 |
 
-插件专属技能：`comfy-harness`。外部技能共 11 个；插件专属技能不进入 `skills.lock.json`。
+插件专属技能：`comfy-harness`（调用规范）、`comfy-design-loop`（生成质量循环：目标图锚定 → 独立评审 → 按退出判据收敛）。外部技能共 11 个；插件专属技能不进入 `skills.lock.json`。
 
 ## 验证与发布门禁
 

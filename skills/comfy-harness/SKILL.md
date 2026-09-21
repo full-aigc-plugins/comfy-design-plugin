@@ -24,6 +24,15 @@ description: Comfy 专家团的调用规范：comfy-cloud MCP 工具面、成本
 
 1. **发现免费、生成计费**——任何 run/submit 前必须有用户授权或预算内授权。
 2. **一次提交**：提交后先持久化 job id；fail/timeout/Unknown 上报 lead，绝不自动重提交。
+   边界注：质量循环（见 `comfy-design-loop` 技能）的「下一轮」是携带评审反馈的**新意图提交**，
+   不属于本条禁止的重试；但失败/超时/Unknown 的 job 仍照本条上报 lead，不得循环重试。
 3. 伙伴模型直连：命名 Flux/Kling/Seedance/DALL-E 等先试 `partner_generate`，命中即短路模板流程。
 4. 云端产物是签名 URL：原样执行返回的下载命令，下载后本地核验再验收。
 5. 上传素材用 `upload_file`（24h 清理），工作流引用返回的文件名，不写绝对路径。
+
+## 质量循环
+
+多轮打磨（对照目标图迭代、逼近参考效果、按质量闭环收敛）hand off 到
+**`comfy-design-loop`** 技能（本插件内置，随 comfy-design 安装）：
+目标图锚定 → 逐轮生成 → 独立子代理评审 → 按退出判据收敛。
+单轮一次性生成不需要它；循环全程仍受上述铁律约束。

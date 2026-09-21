@@ -2,6 +2,7 @@
   "version": 1,
   "dest": "skills/",
   "skills": [
-    "comfy-harness"
+    "comfy-harness",
+    "comfy-design-loop"
   ]
 }

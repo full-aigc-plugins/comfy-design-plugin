@@ -6,8 +6,9 @@ description: 多轮打磨 Comfy 生成结果的质量循环：先锚定一张目
 # Comfy Design Loop — 生成质量循环
 
 受控的多轮生成循环：**目标图锚定 → 逐轮生成 → 独立评审 → 修复 → 按判据退出**。
-每一步都在 `comfy-harness` 技能的铁律约束下进行（发现免费/生成计费、一次提交、
-partner 直连、签名 URL 核验、upload_file 上传）；本技能只增加循环边界，不豁免任何铁律。
+每一步都在 `comfy-harness` 技能的铁律约束下进行（本地零积分/云端才计费、一次提交、
+命名模型须显式升级云端、产物核验与素材引用都分本地/云端两条路）；本技能只增加循环边界，不豁免任何铁律。
+默认全程走本地 `comfy-mcp`，只有 `comfy-harness` §2 的升级白名单里的工具才升级到 `comfy-cloud`。
 
 ## 何时进入 / 不进入
 
@@ -24,7 +25,7 @@ partner 直连、签名 URL 核验、upload_file 上传）；本技能只增加�
 ├── rounds/
 │   └── NNN/                # 每轮一个三位数目录
 │       ├── workflow.json   # 本轮提交的工作流（或 run_template 的模板 id + 参数）
-│       ├── artifact.*      # 本地产物（签名 URL 下载核验后的文件）
+│       ├── artifact.*      # 本地产物（本地 fetch_outputs 落盘；云端则是签名 URL 下载核验后的文件）
 │       └── verdict.md      # 本轮评审结论
 └── ledger.json             # 台账（见 §6）
 ```
@@ -41,13 +42,15 @@ partner 直连、签名 URL 核验、upload_file 上传）；本技能只增加�
   禁止 concept art / cinematic / painting 等词——不可达的艺术图会让循环空转。
 - 已有旧产物 → 先把旧产物作为 baseline 输入生成「改良版」target，禁止发散重画。
 
-target 同时用于两处：经 `upload_file` 作为工作流参考图输入（LoadImage / img2img），
-以及评审时的对照图。
+target 同时用于两处：作为工作流参考图输入（LoadImage / img2img），以及评审时的对照图。
+本地直接把 `target.png` 的文件路径写进工作流；只有升级到云端时才需要先 `upload_file`
+并引用返回的文件名。
 
 ## 2. 授权与预算门禁
 
-- 默认**逐轮确认**：每轮发起任何计费调用（`run_template` / `submit_workflow` /
+- 默认**逐轮确认**：每轮发起任何**云端计费**调用（`run_template` / `submit_workflow` /
   `partner_generate`）前，向用户说明本轮意图与预计成本并获确认。
+  本地 `run_workflow` 零积分，但仍要说明本轮意图（铁律①的本地分支）。
 - 用户显式给出预算（金额或轮数上限）→ 整环预授权，写入 `ledger.json`，轮内不再打断；
   预算耗尽即停，交付当前最优产物并附 gap 清单。
 - 无授权不出轮。不要把「循环继续」当作授权。
@@ -62,7 +65,8 @@ target 同时用于两处：经 `upload_file` 作为工作流参考图输入（L
 
 ## 4. 产物回收与评审
 
-1. `get_output` 取产物 → **原样执行**返回的签名 `curl` 命令 → 本地核验文件存在且可读
+1. 取产物并本地核验文件存在且可读。本地：`fetch_outputs(prompt_id, out_dir)` 直接落盘。
+   云端：`get_output` 取产物 → **原样执行**返回的签名 `curl` 命令
    （铁律④：不重构 URL、不再编码）。
 2. 产物存入 `rounds/NNN/artifact.*`。
 3. 派**全新上下文的评审子代理**（宿主 subagent 工具），输入只有三样：

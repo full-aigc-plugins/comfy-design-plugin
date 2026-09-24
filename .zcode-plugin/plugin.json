@@ -5,11 +5,11 @@
     "en": "Comfy Design",
     "zh-CN": "Comfy 工作流"
   },
-  "version": "0.2.0",
-  "description": "Generate images, video, audio, and 3D, search models and nodes, and run Comfy Cloud workflows through MCP.",
+  "version": "0.3.0",
+  "description": "Generate images, video, audio, and 3D through a local ComfyUI MCP, with Comfy Cloud as an opt-in escalation for partner models and uploads.",
   "description_i18n": {
-    "en": "Comfy Cloud for coding agents — generate images, video, audio, and 3D, search models, nodes, and templates, and run ComfyUI workflows via the hosted Comfy MCP.",
-    "zh-CN": "编码智能体直连 Comfy Cloud：文生图/视频/音频/3D，搜索模型、节点与模板，经托管 Comfy MCP 运行 ComfyUI 工作流。"
+    "en": "Local-first ComfyUI for coding agents — generate images, video, audio, and 3D through the local ComfyUI MCP (comfy-mcp) on your own GPU; escalate to the hosted Comfy MCP (comfy-cloud) only for partner models and uploads.",
+    "zh-CN": "编码智能体本地优先生成：默认经本地 ComfyUI MCP（comfy-mcp）在本机 GPU 上做文生图/视频/音频/3D 与搜索；仅在需要伙伴模型或上传素材时升级到托管 Comfy MCP（comfy-cloud）。"
   },
   "author": {
     "name": "Full Stack Skills / PartMe.AI",
@@ -26,6 +26,14 @@
   "skills": "skills",
   "commands": "commands",
   "mcpServers": {
+    "comfy-mcp": {
+      "command": "python3",
+      "args": [
+        "${ZCODE_PLUGIN_ROOT}/scripts/comfy_mcp_bootstrap.py"
+      ],
+      "cwd": "${ZCODE_PLUGIN_ROOT}",
+      "timeoutMs": 60000
+    },
     "comfy-cloud": {
       "type": "http",
       "url": "https://cloud.comfy.org/mcp",

@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "comfy-mcp": {
+      "type": "stdio",
+      "command": "python3",
+      "args": ["scripts/comfy_mcp_bootstrap.py"],
+      "cwd": ".",
+      "startup_timeout_sec": 20
+    },
+    "comfy-cloud": {
+      "type": "http",
+      "url": "https://cloud.comfy.org/mcp",
+      "default_tools_approval_mode": "prompt"
+    }
+  }
+}

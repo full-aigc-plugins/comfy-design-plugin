@@ -26,7 +26,8 @@ def main() -> int:
             "(/comfy-generate-image /comfy-generate-video /comfy-generate-audio "
             "/comfy-generate-3d /comfy-search-models /comfy-search-nodes "
             "/comfy-search-templates /comfy-upscale-image /comfy-remove-background)；"
-            "MCP 工具经 comfy-cloud 提供。"
+            "默认走本地 comfy-mcp，本地无等价工具时"
+            "（partner_generate / upload_file / run_template 等）才升级 comfy-cloud。"
         )
     return 0
 

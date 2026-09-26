@@ -14,7 +14,7 @@ class PluginLocalSkillsTest(unittest.TestCase):
         self.registry = json.loads((ROOT / "plugin-local-skills.json").read_text(encoding="utf-8"))
 
     def test_registry_declares_known_local_skills(self) -> None:
-        self.assertEqual(["comfy-harness", "comfy-design-loop"], self.registry["skills"])
+        self.assertEqual(["comfy-harness", "comfy-design-loop", "comfy-local-setup"], self.registry["skills"])
 
     def test_each_local_skill_has_valid_skill_md(self) -> None:
         for name in self.registry["skills"]:

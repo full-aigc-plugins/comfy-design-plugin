@@ -1,3 +1,8 @@
 __pycache__/
 .DS_Store
 .codegraph/
+
+# vendored ComfyUI MCP server — runtime state only; source IS committed
+vendor/comfyui-mcp-server/.venv/
+vendor/comfyui-mcp-server/.env
+vendor/comfyui-mcp-server/workflow/

@@ -1,6 +1,6 @@
 {
   "name": "comfy-design",
-  "version": "0.3.0",
+  "version": "0.5.0",
   "description": "Generate images, video, audio, and 3D through a local ComfyUI MCP, with Comfy Cloud as an opt-in escalation for partner models and uploads.",
   "author": {
     "name": "Full Stack Skills / PartMe.AI"

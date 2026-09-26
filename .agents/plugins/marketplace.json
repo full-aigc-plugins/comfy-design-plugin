@@ -16,7 +16,7 @@
         "authentication": "ON_USE"
       },
       "category": "Creativity",
-      "version": "0.3.0",
+      "version": "0.5.0",
       "description": "Generate images, video, audio, and 3D through a local ComfyUI MCP, with Comfy Cloud as an opt-in escalation for partner models and uploads.",
       "icon": "https://cdn.jsdelivr.net/gh/full-aigc-plugins/comfy-design-plugin@v0.3.0/assets/official-logo.png",
       "interface": {

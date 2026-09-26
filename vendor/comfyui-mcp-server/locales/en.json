@@ -1,0 +1,110 @@
+{
+  "tool": {
+    "get_core_manual": {
+      "title": "Get Core Manual",
+      "description": "[System Guide] Core protocols and operation dictionary. MUST read before initialization or calling tools to obtain parameter strategies and error handling."
+    },
+    "get_workflows_catalog": {
+      "title": "Get Workflows Catalog",
+      "description": "[Catalog Index] Retrieve all supported workflows. Image/video directives MUST match this list exactly. Hallucinating or guessing workflow names is STRICTLY FORBIDDEN."
+    },
+    "get_workflow_API": {
+      "title": "Get Workflow Details",
+      "description": "[Workflow API] Read the massive full topology JSON of a workflow. ONLY use for deep logic debugging during task failures. FORBIDDEN in routine tasks to avoid context pollution.",
+      "param": {
+        "workflowName": "Target Workflow Name"
+      }
+    },
+    "mount_workflow": {
+      "title": "Mount Workflow",
+      "description": "[Parameter Mount] Extract supported interactive parameter schema (hiding internal connections). MUST call this BEFORE submitting a task to acquire the valid parameter key map.",
+      "param": {
+        "workflowName": "Target Workflow Name"
+      }
+    },
+    "queue_prompt": {
+      "title": "Execute Workflow Task",
+      "description": "[Task Submit] Queue a task Prompt. Host auto-syncs real-time progress. Ensure all keys are validated via mount. Fabricating unexposed keys is PROHIBITED.",
+      "param": {
+        "workflowName": "Target Workflow Name",
+        "parameters": "Key-value prompt parameters. Example: {'5_text': 'a cat'}. MUST strictly follow the Schema.",
+        "isAsync": "Pass true to return Prompt ID immediately (async); pass false to wait for the result (sync). Default: false. For multi-task requests, pass true to batch-submit all tasks first, then query results individually."
+      }
+    },
+    "queue_custom_prompt": {
+      "title": "Execute Custom Workflow Task",
+      "description": "[Advanced Mode] Queue full raw ComfyUI API Prompt JSON directly. Restricted to deep debugging or explicit expert directives. FORBIDDEN in routine tasks.",
+      "param": {
+        "workflowName": "Name of the custom workflow.",
+        "apiJson": "Complete ComfyUI Prompt JSON object or string.",
+        "isAsync": "Pass true to return Prompt ID immediately (async); pass false to wait for the result (sync). Default: false. For multi-task requests, pass true to batch-submit all tasks first, then query results individually."
+      }
+    },
+    "save_custom_workflow": {
+      "title": "Save Custom Workflow",
+      "description": "[Save Workflow] Save a custom parameterized workflow to the server's workflow directory, which automatically validates and mounts it. The submitted JSON must conform to specifications (at least one valid ==Name== node), otherwise it will be rejected.",
+      "param": {
+        "filename": "The filename to save as (e.g. my_workflow or my_workflow.json).",
+        "apiJson": "Complete ComfyUI Prompt JSON object (including node topology)."
+      }
+    },
+    "save_task_assets": {
+      "title": "Save Generated Assets",
+      "description": "[Save Generated Assets] Fetch the execution history of a specified task (promptId), and download all generated multimedia outputs (images, videos, GIFs, etc.) to the designated local directory.",
+      "param": {
+        "promptId": "The promptId of the task.",
+        "destinationDir": "Optional. Local directory path to save files (if not provided or invalid, defaults to the 'assets' folder in the project root).",
+        "overwrite": "Whether to overwrite existing files (true to overwrite, defaults to false)."
+      }
+    },
+    "upload_assets": {
+      "title": "Upload Assets",
+      "description": "[Upload Assets] Upload a local file or an HTTP URL image to the ComfyUI server's input directory so it can be used directly in workflows.",
+      "param": {
+        "fileSource": "File source. Can be an absolute local file path or public HTTP/HTTPS URL.",
+        "mimeType": "MIME type of the file (optional if unknown)."
+      },
+      "success": "Asset {finalFileName} successfully uploaded to the ComfyUI server."
+    },
+    "interrupt_prompt": {
+      "title": "Cancel Task",
+      "description": "[Task Cancel] Cancel the compute process for a specific `promptId` and completely remove its pending items from the queue.",
+      "param": {
+        "promptId": "The promptId returned when queued."
+      }
+    },
+    "get_prompt_result": {
+      "title": "Get Task Result",
+      "description": "[History & Asset Extractor] Get node states/snapshots for a completely executed Prompt AND extracts generated media files (image/video URLs) or traceback diagnostic errors.",
+      "param": {
+        "promptId": "The promptId of the task."
+      }
+    },
+    "get_system_status": {
+      "title": "Get System Status",
+      "description": "[System Monitor] Collect RAM, VRAM, and Python runtime metrics to troubleshoot OOM or deadlocks."
+    },
+    "list_models": {
+      "title": "List Models",
+      "description": "[Model Catalog] Poll local disk model storage. When parameters require specific model files, MUST call this first to verify. Hallucinating model names is STRICTLY FORBIDDEN.",
+      "param": {
+        "typeName": "Model type. E.g., checkpoints, loras. Default: checkpoints."
+      }
+    },
+    "tool.free_memory.description": "Unload models and/or free VRAM/system memory (OOM recovery). Both flags default to true.",
+    "tool.free_memory.param.unload_models": "Unload loaded models (default true)",
+    "tool.free_memory.param.free_memory": "Free system memory (default true)",
+    "tool.list_embeddings.description": "List available embedding names (for prompt references).",
+    "tool.list_local_templates.description": "List the LOCAL workflow template tree shipped with this ComfyUI (not the cloud registry).",
+    "tool.upload_mask.description": "Upload an inpainting mask file to the ComfyUI input directory.",
+    "tool.upload_mask.param.file_path": "Local absolute path of the mask file",
+    "tool.upload_mask.param.original_ref": "Optional original-reference JSON string ({\"filename\":..., \"type\":\"output\"}) used by ComfyUI to derive mask alpha"
+  },
+  "error": {
+    "downloadAssetsFail": "Failed to download remote file. HTTP Status: {status}",
+    "fileNotExistError": "Specified local file does not exist: {fileSource}",
+    "uploadFail": "Upload failed: {message}",
+    "comfyui_execution_failed": "ComfyUI execution failed. You MUST diagnose the issue based on the returned node error logs. It is STRICTLY FORBIDDEN to blindly retry without addressing the error.\nDetails: {result}",
+    "mcp_execution_failed": "MCP Server execution error. Please correct parameters or check environment status based on the error message. It is STRICTLY FORBIDDEN to ignore the error and continue.\nDetails: {e}"
+  }
+}

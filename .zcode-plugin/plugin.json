@@ -5,7 +5,7 @@
     "en": "Comfy Design",
     "zh-CN": "Comfy 工作流"
   },
-  "version": "0.3.0",
+  "version": "0.5.0",
   "description": "Generate images, video, audio, and 3D through a local ComfyUI MCP, with Comfy Cloud as an opt-in escalation for partner models and uploads.",
   "description_i18n": {
     "en": "Local-first ComfyUI for coding agents — generate images, video, audio, and 3D through the local ComfyUI MCP (comfy-mcp) on your own GPU; escalate to the hosted Comfy MCP (comfy-cloud) only for partner models and uploads.",

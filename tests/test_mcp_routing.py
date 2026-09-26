@@ -33,6 +33,7 @@ EXPECTED_COMMANDS = {
     "comfy-generate-image.md",
     "comfy-generate-video.md",
     "comfy-help.md",
+    "comfy-local-setup.md",
     "comfy-remove-background.md",
     "comfy-search-models.md",
     "comfy-search-nodes.md",

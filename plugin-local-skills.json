@@ -3,6 +3,7 @@
   "dest": "skills/",
   "skills": [
     "comfy-harness",
-    "comfy-design-loop"
+    "comfy-design-loop",
+    "comfy-local-setup"
   ]
 }

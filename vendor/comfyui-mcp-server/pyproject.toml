@@ -1,0 +1,54 @@
+[project]
+name = "comfyui-mcp-server"
+version = "0.1.0"
+description = "A Python MCP Server that connects AI agents to ComfyUI, exposing workflows as callable tools."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+    { name = "MetaBrain-Labs", email = "admin@metabrain.design" }
+]
+keywords = ["comfyui", "mcp", "ai", "image-generation", "workflow", "agent"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Multimedia :: Graphics",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.2.0",
+    "httpx>=0.27.0",
+    "websockets>=13.0",
+    "pydantic>=2.9.0",
+    "python-dotenv>=1.0.0",
+    "loguru>=0.7.2",
+    # Streamable HTTP transport (optional but recommended)
+    "uvicorn>=0.30.0",
+    "starlette>=0.40.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+]
+
+[project.urls]
+Homepage = "https://github.com/MetaBrain-Labs/ComfyUI-MCP-Server-Python"
+Repository = "https://github.com/MetaBrain-Labs/ComfyUI-MCP-Server-Python"
+Issues = "https://github.com/MetaBrain-Labs/ComfyUI-MCP-Server-Python/issues"
+
+[project.scripts]
+comfyui-mcp-server = "src.__main__:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]

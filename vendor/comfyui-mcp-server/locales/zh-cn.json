@@ -1,0 +1,110 @@
+{
+  "tool": {
+    "get_core_manual": {
+      "title": "获取项目核心手册",
+      "description": "【系统指引】核心协议与操作字典。初始化或调用其他工具前必须优先读取，获取最新参数填充策略与报错恢复机制。"
+    },
+    "get_workflows_catalog": {
+      "title": "获取工作流目录",
+      "description": "【目录检索】获取当前服务器支持的所有工作流清单。涉及生图的指令必须精确匹配此清单，严禁伪造或猜测工作流名称。"
+    },
+    "get_workflow_API": {
+      "title": "获取工作流详情",
+      "description": "【工作流API】读取目标工作流的全量底层拓扑JSON。体积庞大，仅在执行异常需排查最底层逻辑时调用，严禁在常规业务中使用防污染上下文。",
+      "param": {
+        "workflowName": "目标工作流名称"
+      }
+    },
+    "mount_workflow": {
+      "title": "挂载工作流",
+      "description": "【参数挂载】提取目标生成任务的受支持交互参数Schema（屏蔽连线细节）。提交工作流任务前，必须调用此接口获取合法的参数键名表。",
+      "param": {
+        "workflowName": "目标工作流名称"
+      }
+    },
+    "queue_prompt": {
+      "title": "执行工作流任务",
+      "description": "【任务提交】向队列提交任务 Prompt。底层自动调度计算节点并向 Host 实时同步进度。必须确保所有键名已通过挂载校验，严禁编造键名。",
+      "param": {
+        "workflowName": "目标工作流名称",
+        "parameters": "任务参数键值对集合。例如：{'5_text': 'a cat'}。必须严格遵循 Schema。",
+        "isAsync": "传 true 提交后立即返回 Prompt ID（异步）；传 false 等待生成结果（同步）。默认 false。若用户提出多任务并行需求，应传 true 批量提交所有任务后再逐一查询结果。"
+      }
+    },
+    "queue_custom_prompt": {
+      "title": "执行自定义工作流任务",
+      "description": "【高级模式】直接向队列提交完整的原生 ComfyUI API Prompt JSON。仅在调试底层方案或响应明确专家指令时开放，常规任务严禁使用。",
+      "param": {
+        "workflowName": "自定义工作流的名称",
+        "apiJson": "完整的 ComfyUI Prompt 格式 JSON 对象或字符串。",
+        "isAsync": "传 true 提交后立即返回 Prompt ID（异步）；传 false 等待生成结果（同步）。默认 false。若用户提出多任务并行需求，应传 true 批量提交所有任务后再逐一查询结果。"
+      }
+    },
+    "save_custom_workflow": {
+      "title": "保存自定义工作流",
+      "description": "【保存工作流】将自定义参数化工作流保存到服务器的工作流目录中并随后自动执行语法校验和挂载。提交的 JSON 必须符合规范（至少包含一处符合挂载规则的 ==名称== 节点），否则将被拒绝保存。",
+      "param": {
+        "filename": "要保存的文件名（如 my_workflow 或 my_workflow.json）。",
+        "apiJson": "完整的 ComfyUI Prompt 格式 JSON 对象（包含节点拓扑）。"
+      }
+    },
+    "save_task_assets": {
+      "title": "保存生成资产",
+      "description": "【保存生成资产】获取指定任务 (promptId) 的执行历史，并将产生的所有多媒体生成物 (图片、视频、GIF等) 下载并保存到指定的本地目录中。",
+      "param": {
+        "promptId": "任务的 promptId。",
+        "destinationDir": "可选。文件要保存到的本地路径（如果未指定或路径不合法，将默认存放在项目目录的 assets 文件夹中）。",
+        "overwrite": "若文件已存在是否覆盖，传 true 为覆盖，默认为 false。"
+      }
+    },
+    "upload_assets": {
+      "title": "上传资产",
+      "description": "【上传文件】将本地文件或网络 URL 上传至 ComfyUI 服务器的 input 目录，以便在工作流中直接应用。",
+      "param": {
+        "fileSource": "文件源。可以是本地绝对路径或者公网 HTTP/HTTPS URL。",
+        "mimeType": "文件的 Mime 类型（如果未知可以不传）。"
+      },
+      "success": "资产 {finalFileName} 成功上传到 ComfyUI 服务器。"
+    },
+    "interrupt_prompt": {
+      "title": "取消任务",
+      "description": "【任务取消】取消特定 `promptId` 的运算进程并强制移除队列中的等待项。",
+      "param": {
+        "promptId": "提交 Queue 时的 promptId。"
+      }
+    },
+    "get_prompt_result": {
+      "title": "获取任务结果",
+      "description": "【输出快照与资产】获取特定 Prompt 执行完成后的节点快照，提取生成的目标媒体文件（图像/视频链接）或回溯 Traceback 诊断错误。",
+      "param": {
+        "promptId": "任务的 promptId。优先使用标准的 promptId 键名。"
+      }
+    },
+    "get_system_status": {
+      "title": "获取系统状态",
+      "description": "【系统监控】采集内存、显存及 Python 运行时指标，用于排查 OOM 或服务死锁等底层异常。"
+    },
+    "list_models": {
+      "title": "获取模型列表",
+      "description": "【模型目录】轮询本地磁盘模型存放区。参数涉及具体模型文件时，必须前置调用此接口枚举校准，严禁凭空伪造模型文件名。",
+      "param": {
+        "typeName": "模型类型。如 checkpoints, loras 等。默认为 checkpoints。"
+      }
+    },
+    "tool.free_memory.description": "卸载模型并释放显存/内存（OOM 恢复）。默认两个开关都开。",
+    "tool.free_memory.param.unload_models": "是否卸载已加载的模型（默认 true）",
+    "tool.free_memory.param.free_memory": "是否释放系统内存（默认 true）",
+    "tool.list_embeddings.description": "列出可用的 embedding 名称清单（提示词引用用）。",
+    "tool.list_local_templates.description": "列出本机 ComfyUI 自带的工作流模板树（本地模板，非云端注册表）。",
+    "tool.upload_mask.description": "上传局部重绘蒙版文件到 ComfyUI 输入目录。",
+    "tool.upload_mask.param.file_path": "蒙版文件的本地绝对路径",
+    "tool.upload_mask.param.original_ref": "可选：原参考图的 JSON 字符串（{\"filename\":..., \"type\":\"output\"}），ComfyUI 用它派生蒙版 alpha"
+  },
+  "error": {
+    "downloadAssetsFail": "网络文件下载失败，HTTP 状态码: {status}",
+    "fileNotExistError": "指定的本地文件不存在: {fileSource}",
+    "uploadFail": "上传处理失败: {message}",
+    "comfyui_execution_failed": "ComfyUI 执行失败，请务必依据返回的节点错误日志诊断问题，严禁无视报错盲目重试。\n详情: {result}",
+    "mcp_execution_failed": "MCP 服务端执行出错，请根据返回的错误信息修正参数或检查环境状态，严禁忽略报错继续执行。\n详情: {e}"
+  }
+}

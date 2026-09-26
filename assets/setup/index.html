@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Comfy Design MCP 设置</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="page-shell">
+    <header class="hero">
+      <div class="brand"><img class="brand-mark" src="/logo.png" alt=""><strong>Comfy Design <span aria-hidden="true"></span> <em>MCP</em></strong></div>
+      <h1>填一次配置，任意 Agent 使用你的本地 ComfyUI</h1>
+      <p class="subtitle">目标主机与凭据仅保存在本机受限文件中，不进入聊天、Git 或日志</p>
+    </header>
+
+    <section class="setup-card" data-csrf="__CSRF_TOKEN__">
+      <div class="card-title"><img src="/logo.png" alt=""><strong>ComfyUI 目标主机</strong></div>
+      <div class="input-row">
+        <input id="comfyui-target" type="text" autocomplete="off"
+               placeholder="http://127.0.0.1:8188（或局域网主机，如 http://192.168.1.20:8188）"
+               aria-label="ComfyUI 地址">
+        <button id="test" type="button" class="ghost">测试连接</button>
+      </div>
+      <p id="probe" aria-live="polite">未测试</p>
+
+      <div class="divider"></div>
+      <div class="section-title"><span class="bar"></span><strong>Comfy Cloud API Key</strong><span class="hint">可选 · 仅升级云端 / 伙伴模型时需要</span></div>
+      <div class="input-row">
+        <input id="cloud-key" type="password" autocomplete="off"
+               placeholder="粘贴 comfyui- 前缀的 API Key"
+               aria-label="Comfy Cloud API Key">
+        <button id="save">保存</button>
+      </div>
+      <p id="status" aria-live="polite">留空保存即保持纯本地（零计费）模式。</p>
+
+      <div class="divider"></div>
+      <div class="section-title"><span class="bar"></span><strong>运行环境</strong><span class="hint">本地 MCP 的 Python 运行时</span></div>
+      <p id="venv-line">检查中…</p>
+      <div class="action-row">
+        <button id="setup-venv" type="button" class="ghost">一键安装本地 MCP 运行环境</button>
+      </div>
+
+      <ul>
+        <li>目标主机保存后写入插件内 <code>vendor/comfyui-mcp-server/.env</code>，下次启动本地 MCP 生效</li>
+        <li>Cloud Key 在 <a href="https://platform.comfy.org/profile/api-keys" target="_blank" rel="noreferrer">platform.comfy.org</a> 创建，用于云端升级路径与本地 API 节点计费</li>
+        <li>纯本地生成零积分；仅当你明确要求伙伴模型（Flux Pro / Kling 等）时才走云端并计费</li>
+      </ul>
+      <details>
+        <summary>高级设置</summary>
+        <div class="adv-grid">
+          <label>工具语言
+            <select id="locale">
+              <option value="zh-CN">中文</option>
+              <option value="en">English</option>
+            </select>
+          </label>
+          <label>工作流同步
+            <select id="sync-mode">
+              <option value="manual">按需刷新（推荐）</option>
+              <option value="timed">定时轮询（实时但常驻）</option>
+              <option value="push">事件推送（实验）</option>
+            </select>
+          </label>
+        </div>
+        <p class="adv-hint"><span id="adv-status" aria-live="polite"></span>修改即保存（写入 vendor 内 .env），本地 MCP 下次启动时应用；正在运行的实例不会热切换。目标地址也可用环境变量 <code>COMFY_UI_SERVER_IP</code> 覆盖（优先级：环境变量 &gt; 本页 &gt; .env）；普通用户无需设置任何系统变量。只读检查：<code>python3 scripts/comfy_local_setup.py check</code>。</p>
+      </details>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>

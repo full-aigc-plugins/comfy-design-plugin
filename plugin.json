@@ -1,0 +1,51 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "comfy-design",
+  "version": "0.5.0",
+  "description": "Generate images, video, audio, and 3D through a local ComfyUI MCP, with Comfy Cloud as an opt-in escalation for partner models and uploads.",
+  "author": {
+    "name": "Full Stack Skills / PartMe.AI",
+    "url": "https://github.com/partme-ai"
+  },
+  "homepage": "https://github.com/full-aigc-plugins/comfy-design-plugin",
+  "repository": "https://github.com/full-aigc-plugins/comfy-design-plugin",
+  "license": "Apache-2.0",
+  "keywords": [
+    "comfy",
+    "comfyui",
+    "text2image",
+    "text2video",
+    "workflow"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Comfy Design",
+        "shortDescription": "Local-first ComfyUI generation workflows",
+        "longDescription": "Generate images, video, audio, and 3D on your own GPU through the local ComfyUI MCP (comfy-mcp), and escalate to the hosted Comfy MCP (comfy-cloud) only for partner models and uploads.",
+        "developerName": "Full Stack Skills / PartMe.AI",
+        "category": "Creativity",
+        "websiteURL": "https://github.com/full-aigc-plugins/comfy-design-plugin",
+        "brandColor": "#F2FF59",
+        "composerIcon": "./assets/composer-icon.png",
+        "logo": "./assets/official-logo.png",
+        "logoDark": "./assets/official-logo.png",
+        "screenshots": [],
+        "capabilities": [
+          "Read",
+          "Write"
+        ],
+        "privacyPolicyURL": "https://github.com/full-aigc-plugins/comfy-design-plugin/blob/main/PRIVACY.md",
+        "termsOfServiceURL": "https://github.com/full-aigc-plugins/comfy-design-plugin/blob/main/TERMS.md",
+        "defaultPrompt": [
+          "Generate an image with a local ComfyUI workflow and show the result",
+          "Search my local ComfyUI nodes and models for my use case",
+          "Run this ComfyUI workflow locally and verify the outputs"
+        ]
+      }
+    },
+    "ai.nanoco.nanoclaw": {
+      "agentName": "Comfy Design"
+    }
+  }
+}

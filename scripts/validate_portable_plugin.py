@@ -413,10 +413,21 @@ def _check_remote(where: str, entry: dict, report: Report) -> None:
             f"url {url!r} must not contain placeholders; clients MUST NOT perform "
             f"placeholder or environment-variable expansion in url (§7.2.1).",
         )
-    if not url.startswith(("http://", "https://")):
-        report.fail(where, f"url {url!r} must be an absolute HTTP or HTTPS URL (§7.2.1)")
-    elif "#" in url:
-        report.fail(where, f"url {url!r} must not contain a fragment (§7.2.1)")
+    # §7.2.1: an absolute HTTP or HTTPS URL. Parse, don't prefix-match — a bare
+    # `https://` or a URL with an empty host or embedded whitespace must not pass.
+    from urllib.parse import urlsplit
+
+    if any(ch.isspace() for ch in url):
+        report.fail(where, f"url {url!r} must not contain whitespace (§7.2.1)")
+    else:
+        parts = urlsplit(url)
+        if parts.scheme not in ("http", "https") or not parts.netloc:
+            report.fail(
+                where,
+                f"url {url!r} must be an absolute HTTP or HTTPS URL with a host (§7.2.1)",
+            )
+        elif parts.fragment:
+            report.fail(where, f"url {url!r} must not contain a fragment (§7.2.1)")
 
     headers = entry.get("headers")
     if headers is not None:
@@ -488,16 +499,23 @@ def check_skills(root: Path, report: Report) -> tuple[int, list[str]]:
 
 def check_skill_md(where: str, skill_dir: Path, path: Path, report: Report) -> None:
     text = path.read_text(encoding="utf-8", errors="replace")
-    if not text.startswith("---"):
+    # The opening delimiter must be a line that is exactly `---`; a prefix or
+    # substring check would accept `---not-a-fence`.
+    lines = text.splitlines()
+    if not lines or lines[0].strip() != "---":
         report.fail(where, "missing YAML frontmatter; required by the Agent Skills spec (§7.1)")
         return
-    end = text.find("\n---", 3)
+    end = -1
+    for index in range(1, len(lines)):
+        if lines[index].strip() == "---":
+            end = index
+            break
     if end == -1:
         report.fail(where, "unterminated YAML frontmatter")
         return
 
     fields: dict[str, str] = {}
-    for line in text[3:end].splitlines():
+    for line in lines[1:end]:
         match = re.match(r"^([A-Za-z_-]+):\s*(.*)$", line)
         if match:
             fields[match.group(1)] = match.group(2).strip().strip('"').strip("'")
@@ -522,18 +540,24 @@ def check_skill_md(where: str, skill_dir: Path, path: Path, report: Report) -> N
 
 
 def _content_files(directory: Path) -> dict[str, Path]:
-    """Map relative path -> file for every real content file under `directory`."""
+    """Map relative path -> file for every real content file under `directory`.
+
+    Dot-prefixed paths are skipped along with build caches — mirrors and scans
+    must never treat `.DS_Store`, `.gitignore` or similar as content."""
     found: dict[str, Path] = {}
     if not directory.is_dir():
         return found
     for path in directory.rglob("*"):
         if not path.is_file():
             continue
+        relative = path.relative_to(directory)
+        if any(part.startswith(".") for part in relative.parts):
+            continue
         if any(part in _IGNORED_PARTS for part in path.parts):
             continue
         if path.suffix in _IGNORED_SUFFIXES:
             continue
-        found[str(path.relative_to(directory))] = path
+        found[str(relative)] = path
     return found
 
 
@@ -574,20 +598,20 @@ def check_client_extensions(root: Path, report: Report) -> None:
                 report.fail(
                     f"{namespace}/{source}/{relative}",
                     f"is missing from the client extension mirror of `{source}/`; "
-                    f"re-run scripts/add_client_extensions.py (§8.2).",
+                    f"refresh the `{namespace}/{source}/` mirror from the root copy (§8.2).",
                 )
             for relative in sorted(set(mirrored) - set(original)):
                 report.fail(
                     f"{namespace}/{source}/{relative}",
                     f"has no counterpart in the root `{source}/`; remove the stale "
-                    f"mirror (§8.2).",
+                    f"mirror file (§8.2).",
                 )
             for relative in sorted(set(mirrored) & set(original)):
                 if mirrored[relative].read_bytes() != original[relative].read_bytes():
                     report.fail(
                         f"{namespace}/{source}/{relative}",
-                        f"has drifted from the root `{source}/` copy; re-run "
-                        f"scripts/add_client_extensions.py (§8.2).",
+                        f"has drifted from the root `{source}/` copy; refresh the "
+                        f"mirror from the root copy (§8.2).",
                     )
 
             if mirrored:
@@ -631,7 +655,8 @@ def check_parity(root: Path, plugin: dict | None, report: Report) -> None:
     interface = other.get("interface")
     if isinstance(interface, dict):
         extensions = plugin.get("extensions")
-        carried = extensions.get("com.openai", {}).get("interface") if isinstance(extensions, dict) else None
+        openai = extensions.get("com.openai") if isinstance(extensions, dict) else None
+        carried = openai.get("interface") if isinstance(openai, dict) else None
         if carried is None:
             report.fail(
                 where,

@@ -187,9 +187,10 @@ def check_plugin_manifest(root: Path, report: Report) -> dict | None:
         report.fail(where, f"version must be a string, got {type(version).__name__} (§5.4)")
 
     keywords = manifest.get("keywords")
-    if keywords is not None:
-        if not isinstance(keywords, list) or not all(isinstance(k, str) for k in keywords):
-            report.fail(where, "keywords must be an array of strings (§5.4)")
+    if keywords is not None and (
+        not isinstance(keywords, list) or not all(isinstance(k, str) for k in keywords)
+    ):
+        report.fail(where, "keywords must be an array of strings (§5.4)")
 
     for scalar in ("description", "homepage", "repository", "license"):
         if scalar in manifest and not isinstance(manifest[scalar], str):

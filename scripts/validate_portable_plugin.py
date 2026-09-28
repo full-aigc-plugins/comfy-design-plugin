@@ -376,6 +376,15 @@ def _check_stdio(where: str, entry: dict, root: Path, report: Report) -> None:
                 where,
                 f"command {command!r} escapes the plugin root (§4.1).",
             )
+    elif "/" in command:
+        # §7.2.1: command is either a bare executable name (resolved by platform
+        # search) or a plugin-relative path beginning with ./ . An absolute path
+        # or a ../ traversal is neither and must not pass as PATH-resolved.
+        report.fail(
+            where,
+            f"command {command!r} must be a bare executable name or a plugin-relative "
+            f"path beginning with './' (§7.2.1).",
+        )
 
     args = entry.get("args")
     if args is not None and (
@@ -581,11 +590,18 @@ def check_skill_md(where: str, skill_dir: Path, path: Path, report: Report) -> N
         report.fail(where, "unterminated YAML frontmatter")
         return
 
+    # Extract `key: value` pairs. A value that is empty or comment-only
+    # (`description: # omitted`) is not a value; treat it as absent so the
+    # required-field checks fire instead of silently accepting a comment.
     fields: dict[str, str] = {}
     for line in lines[1:end]:
         match = re.match(r"^([A-Za-z_-]+):\s*(.*)$", line)
         if match:
-            fields[match.group(1)] = match.group(2).strip().strip('"').strip("'")
+            raw = match.group(2).strip()
+            # a value that is empty or comment-only (`description: # omitted`)
+            # is not a value; a trailing ` # comment` is stripped too
+            raw = "" if raw.startswith("#") else re.sub(r"\s+#.*$", "", raw).strip()
+            fields[match.group(1)] = raw.strip('"').strip("'")
 
     name = fields.get("name", "")
     if not name:
@@ -605,8 +621,16 @@ def check_skill_md(where: str, skill_dir: Path, path: Path, report: Report) -> N
                 f"frontmatter name {name!r} does not match its directory "
                 f"{skill_dir.name!r}; discovery is by directory (§7.1).",
             )
-    if not fields.get("description"):
+    description = fields.get("description", "")
+    if not description:
         report.fail(where, "frontmatter is missing `description`")
+    elif len(description) > 1024:
+        # Agent Skills limits `description` to 1,024 characters; a client may
+        # reject a skill that the validator accepted.
+        report.fail(
+            where,
+            f"frontmatter description is {len(description)} characters, must be at most 1024",
+        )
 
 
 # --- client extension directories (§8.2) ----------------------------------
@@ -759,12 +783,6 @@ def validate(root: Path) -> Report:
         report.note(f"{count} skill(s) discovered under skills/")
     check_client_extensions(root, report)
     check_parity(root, plugin, report)
-    if (root / ".mcp.json").is_file() and not (root / "mcp.json").is_file():
-        report.note(
-            "`.mcp.json` is present but `mcp.json` is not; Agent Plugins reads only "
-            "`mcp.json` at the plugin root, so these MCP servers are invisible to a "
-            "conformant client (§6.1, §7.2.1)."
-        )
     return report
 
 

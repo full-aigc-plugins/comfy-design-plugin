@@ -182,24 +182,34 @@ def check_plugin_manifest(root: Path, report: Report) -> dict | None:
                 f"must start and end alphanumeric; no '--' or '..').",
             )
 
-    version = manifest.get("version")
-    if version is not None and not isinstance(version, str):
-        report.fail(where, f"version must be a string, got {type(version).__name__} (§5.4)")
+    # §5.4: every metadata field, when present, MUST have its declared JSON type.
+    # An explicit `null` is a type violation, not absence — detect it with `in`.
+    if "version" in manifest and not isinstance(manifest["version"], str):
+        report.fail(
+            where,
+            f"version must be a string, got {type(manifest['version']).__name__} (§5.4)",
+        )
 
-    keywords = manifest.get("keywords")
-    if keywords is not None and (
-        not isinstance(keywords, list) or not all(isinstance(k, str) for k in keywords)
+    if "keywords" in manifest and (
+        not isinstance(manifest["keywords"], list)
+        or not all(isinstance(k, str) for k in manifest["keywords"])
     ):
         report.fail(where, "keywords must be an array of strings (§5.4)")
 
     for scalar in ("description", "homepage", "repository", "license"):
         if scalar in manifest and not isinstance(manifest[scalar], str):
-            report.fail(where, f"{scalar} must be a string (§5.4)")
+            report.fail(
+                where,
+                f"{scalar} must be a string, got {type(manifest[scalar]).__name__} (§5.4)",
+            )
 
-    author = manifest.get("author")
-    if author is not None:
+    if "author" in manifest:
+        author = manifest["author"]
         if not isinstance(author, dict):
-            report.fail(where, "author must be an object (§5.4)")
+            report.fail(
+                where,
+                f"author must be an object, got {type(author).__name__} (§5.4)",
+            )
         else:
             extra = sorted(set(author) - AUTHOR_ALLOWED)
             if extra:
@@ -210,10 +220,13 @@ def check_plugin_manifest(root: Path, report: Report) -> dict | None:
                 )
             for key, value in author.items():
                 if not isinstance(value, str):
-                    report.fail(where, f"author.{key} must be a string (§5.4)")
+                    report.fail(
+                        where,
+                        f"author.{key} must be a string, got {type(value).__name__} (§5.4)",
+                    )
 
-    extensions = manifest.get("extensions")
-    if extensions is not None:
+    if "extensions" in manifest:
+        extensions = manifest["extensions"]
         if not isinstance(extensions, dict):
             # Non-fatal: the client reports and ignores it (§8.1).
             report.fail(
@@ -346,7 +359,9 @@ def _check_stdio(where: str, entry: dict, root: Path, report: Report) -> None:
     command = entry["command"]
     if not isinstance(command, str) or not command:
         report.fail(where, "command must be a non-empty string (§7.2.1)")
-    elif " " in command.strip():
+    elif any(ch.isspace() for ch in command):
+        # §7.2.1: one executable token. Any whitespace — space, tab, newline —
+        # means it is a shell command string, not a token.
         report.fail(
             where,
             f"command {command!r} must be a single executable token, not a shell "
@@ -400,6 +415,32 @@ def _check_stdio(where: str, entry: dict, root: Path, report: Report) -> None:
                 target.relative_to(root.resolve())
             except ValueError:
                 report.fail(where, f"cwd {cwd!r} escapes the plugin root (§4.1)")
+        else:
+            # §9.2 + §4.1: expand the declared placeholder and verify containment.
+            # `${PLUGIN_ROOT}/../../outside` must not pass as conformant.
+            if cwd.startswith("${PLUGIN_DATA}"):
+                base = _plugin_data_dir(root)
+                expanded = base / cwd[len("${PLUGIN_DATA}"):].lstrip("/")
+            else:
+                base = root.resolve()
+                expanded = base / cwd[len("${PLUGIN_ROOT}"):].lstrip("/")
+            try:
+                expanded.resolve().relative_to(base.resolve())
+            except ValueError:
+                report.fail(
+                    where,
+                    f"cwd {cwd!r} escapes its declared root after placeholder "
+                    f"expansion (§4.1)",
+                )
+
+
+def _plugin_data_dir(root: Path) -> Path:
+    """The client-managed PLUGIN_DATA location for this installed instance.
+
+    Mirrors the reference layout clients use: a dedicated writable directory
+    that persists across updates. Validation only needs a stable anchor for
+    containment checks."""
+    return root.resolve().parent / "data" / root.name
 
 
 def _check_remote(where: str, entry: dict, report: Report) -> None:
@@ -465,7 +506,10 @@ def _check_remote(where: str, entry: dict, report: Report) -> None:
 
 # --- skills/ (§6.1, §7.1) --------------------------------------------------
 
-FRONTMATTER_NAME_RE = re.compile(r"^(?!.*(?:--|\.\.))[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$")
+# Agent Skills identifiers: lowercase alphanumerics and hyphens (kebab-case),
+# 1-64 characters. This is deliberately stricter than the plugin-name grammar
+# (§5.5) — skill names do not use periods.
+FRONTMATTER_NAME_RE = re.compile(r"^(?!.*--)[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$")
 
 
 def check_skills(root: Path, report: Report) -> tuple[int, list[str]]:
@@ -482,15 +526,38 @@ def check_skills(root: Path, report: Report) -> tuple[int, list[str]]:
         )
         return 0, []
 
+    root_resolved = root.resolve()
     discovered: list[str] = []
     for child in sorted(skills_dir.iterdir()):
+        # Dot-prefixed entries are host/tool metadata, never skills.
+        if child.name.startswith("."):
+            continue
         if not child.is_dir():
             # Stray files are not skills; §7.1 only looks at immediate child dirs.
             report.note(f"skills/{child.name} is a file, not a skill directory")
             continue
+        # §4.1: symlinks may resolve within the plugin root, but a skill whose
+        # directory resolves outside it must be skipped, not validated.
+        if child.is_symlink():
+            try:
+                child.resolve().relative_to(root_resolved)
+            except ValueError:
+                report.fail(
+                    where,
+                    f"skills/{child.name} is a symlink escaping the plugin root (§4.1)",
+                )
+                continue
         skill_md = child / "SKILL.md"
         if not skill_md.is_file():
             report.note(f"skills/{child.name}/ has no SKILL.md and is not a skill")
+            continue
+        try:
+            skill_md.resolve().relative_to(root_resolved)
+        except ValueError:
+            report.fail(
+                f"skills/{child.name}/SKILL.md",
+                "resolves outside the plugin root (§4.1)",
+            )
             continue
         discovered.append(child.name)
         check_skill_md(f"skills/{child.name}/SKILL.md", child, skill_md, report)
@@ -524,8 +591,14 @@ def check_skill_md(where: str, skill_dir: Path, path: Path, report: Report) -> N
     if not name:
         report.fail(where, "frontmatter is missing `name`")
     else:
+        if not 1 <= len(name) <= 64:
+            report.fail(where, f"frontmatter name is {len(name)} characters, must be 1-64")
         if not FRONTMATTER_NAME_RE.match(name):
-            report.fail(where, f"frontmatter name {name!r} is not a valid skill identifier")
+            report.fail(
+                where,
+                f"frontmatter name {name!r} is not a valid skill identifier "
+                f"(lowercase alphanumerics and hyphens only)",
+            )
         if name != skill_dir.name:
             report.fail(
                 where,

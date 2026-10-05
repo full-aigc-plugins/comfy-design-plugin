@@ -1,5 +1,14 @@
 # PartMe.AI Comfy Plugin
 
+## Plugin marketplaces
+
+This plugin belongs to **AIGC content creation**.
+
+| Category | Marketplace | Purpose |
+| --- | --- | --- |
+| Full-stack development | [Full Stack Plugins](https://github.com/partme-ai/full-stack-plugins) | Architecture and UI design, code understanding, quality checks, code review, workflow governance, and server operations |
+| AIGC content creation | [Full AIGC Plugins](https://github.com/partme-ai/full-aigc-plugins) | Image, video, audio, music, 3D, and multimodal content creation |
+
 Tri-platform plugin (Codex / ZCode / Kimi Code) that connects coding agents to **a local ComfyUI by default**: generate images, video, audio, and 3D, search local models, and run ComfyUI workflows through the local Comfy MCP (`comfy-mcp`, a vendored MetaBrain fusion) on your own GPU. The hosted Comfy MCP (`https://cloud.comfy.org/mcp`) stays available as an **opt-in escalation path** for the cloud-only tool surface (partner models, registry search, uploads, saved workflows).
 
 > 内容主体 vendor 自 [Comfy-Org/comfy-skills](https://github.com/Comfy-Org/comfy-skills)（MIT），逐字保留、仅加平台适配包装。版本钉在 `upstream/comfy-skills.lock.json`。

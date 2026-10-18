@@ -1,0 +1,5 @@
+# Root DSH shim: install this repository URL directly.
+# The full host (including optional MCP rows) lives in dsh/.
+- insert:
+    - id: comfy-design-plugin
+      name: "comfy-design-plugin"

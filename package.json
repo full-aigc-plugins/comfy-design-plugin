@@ -1,0 +1,12 @@
+{
+  "name": "comfy-design-plugin",
+  "version": "0.6.0",
+  "private": true,
+  "type": "module",
+  "main": "./dsh/lib/index.js",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

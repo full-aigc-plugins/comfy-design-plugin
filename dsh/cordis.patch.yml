@@ -4,7 +4,7 @@
 # for the other hosts.
 - insert:
     - id: comfy-design-plugin
-      name: '@partme-dsh/comfy-design'
+      name: 'comfy-design'
 
     - id: mcp-comfy-design-comfy-mcp
       name: '@deepseek-ai/dsh-mcp-client'
@@ -14,12 +14,12 @@
         toolCallTimeoutMs: 60000
         transport: 'stdio'
         command: "python3"
-        cwd: !!js "(() => { const p = process.getBuiltinModule('node:path'); const req = process.getBuiltinModule('node:module').createRequire(baseUrl); return p.dirname(p.dirname(req.resolve('@partme-dsh/comfy-design/package.json'))) })()"
+        cwd: !!js "(() => { const p = process.getBuiltinModule('node:path'); const req = process.getBuiltinModule('node:module').createRequire(baseUrl); return p.dirname(p.dirname(req.resolve('comfy-design/package.json'))) })()"
         args:
           - "./scripts/comfy_mcp_bootstrap.py"
         env:
-          CLAUDE_PLUGIN_ROOT: !!js "(() => { const p = process.getBuiltinModule('node:path'); const req = process.getBuiltinModule('node:module').createRequire(baseUrl); return p.dirname(p.dirname(req.resolve('@partme-dsh/comfy-design/package.json'))) })()"
-          PLUGIN_ROOT: !!js "(() => { const p = process.getBuiltinModule('node:path'); const req = process.getBuiltinModule('node:module').createRequire(baseUrl); return p.dirname(p.dirname(req.resolve('@partme-dsh/comfy-design/package.json'))) })()"
+          CLAUDE_PLUGIN_ROOT: !!js "(() => { const p = process.getBuiltinModule('node:path'); const req = process.getBuiltinModule('node:module').createRequire(baseUrl); return p.dirname(p.dirname(req.resolve('comfy-design/package.json'))) })()"
+          PLUGIN_ROOT: !!js "(() => { const p = process.getBuiltinModule('node:path'); const req = process.getBuiltinModule('node:module').createRequire(baseUrl); return p.dirname(p.dirname(req.resolve('comfy-design/package.json'))) })()"
           PLUGIN_DATA: !!js "process.getBuiltinModule('node:path').join(process.getBuiltinModule('node:os').homedir(), '.dsh', 'plugin-data', \"comfy-design\")"
     - id: mcp-comfy-design-comfy-cloud
       name: '@deepseek-ai/dsh-mcp-client'

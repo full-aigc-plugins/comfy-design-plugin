@@ -8,14 +8,16 @@
   "exports": {
     ".": "./lib/index.js",
     "./package.json": "./package.json",
-    "./cordis.patch.yml": "./cordis.patch.yml"
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./locale/*": "./locale/*"
   },
   "files": [
     "cordis.patch.yml",
     "lib/index.js",
     "icon.svg",
     "icon.png",
-    "README.md"
+    "README.md",
+    "locale"
   ],
   "license": "Apache-2.0",
   "keywords": [

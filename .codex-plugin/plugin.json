@@ -1,7 +1,7 @@
 {
   "name": "comfy-design",
-  "version": "0.6.1+codex.20261018",
-  "description": "Generate images, video, audio, and 3D through a local ComfyUI MCP, with Comfy Cloud as an opt-in escalation for partner models and uploads.",
+  "version": "0.5.0",
+  "description": "Local-first ComfyUI workflows for images, video, audio and 3D. Partner models and uploads escalate to Comfy Cloud only when opted in.",
   "author": {
     "name": "Full Stack Skills / PartMe.AI",
     "url": "https://github.com/partme-ai"
@@ -18,14 +18,14 @@
   ],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Comfy Design",
-    "shortDescription": "Local-first ComfyUI generation workflows",
+    "displayName": "ComfyUI Workflows · Comfy Design",
+    "shortDescription": "Local image, video, audio and 3D workflows",
     "longDescription": "Generate images, video, audio, and 3D on your own GPU through the local ComfyUI MCP (comfy-mcp), and escalate to the hosted Comfy MCP (comfy-cloud) only for partner models and uploads.",
     "developerName": "Full Stack Skills / PartMe.AI",
     "category": "Creativity",
     "websiteURL": "https://github.com/full-aigc-plugins/comfy-design-plugin",
     "brandColor": "#F2FF59",
-    "composerIcon": "./assets/composer-icon.png",
+    "composerIcon": "./assets/official-logo.png",
     "logo": "./assets/official-logo.png",
     "logoDark": "./assets/official-logo.png",
     "screenshots": [],
@@ -39,7 +39,8 @@
       "Generate an image with a local ComfyUI workflow and show the result",
       "Search my local ComfyUI nodes and models for my use case",
       "Run this ComfyUI workflow locally and verify the outputs"
-    ]
+    ],
+    "composerIconDark": "./assets/official-logo.png"
   },
   "mcpServers": "./.mcp.json"
 }

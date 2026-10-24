@@ -1,7 +1,7 @@
 {
   "name": "partme-ai-comfy",
   "interface": {
-    "displayName": "ComfyUI Workflows · Comfy Design"
+    "displayName": "Comfy Design · ComfyUI Workflows"
   },
   "plugins": [
     {
@@ -20,7 +20,7 @@
       "description": "Local-first ComfyUI workflows for images, video, audio and 3D. Partner models and uploads escalate to Comfy Cloud only when opted in.",
       "icon": "https://cdn.jsdelivr.net/gh/full-aigc-plugins/comfy-design-plugin@v0.5.0/assets/official-logo.png",
       "interface": {
-        "displayName": "ComfyUI Workflows · Comfy Design",
+        "displayName": "Comfy Design · ComfyUI Workflows",
         "shortDescription": "Local image, video, audio and 3D workflows",
         "logo": "https://cdn.jsdelivr.net/gh/full-aigc-plugins/comfy-design-plugin@v0.5.0/assets/official-logo.png"
       }

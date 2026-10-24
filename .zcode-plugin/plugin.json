@@ -1,8 +1,8 @@
 {
   "name": "comfy-design",
-  "displayName": "ComfyUI Workflows · Comfy Design",
+  "displayName": "Comfy Design · ComfyUI Workflows",
   "displayName_i18n": {
-    "en": "ComfyUI Workflows · Comfy Design"
+    "en": "Comfy Design · ComfyUI Workflows"
   },
   "version": "0.5.0",
   "description": "Local-first ComfyUI workflows for images, video, audio and 3D. Partner models and uploads escalate to Comfy Cloud only when opted in.",

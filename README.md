@@ -1,178 +1,160 @@
-# Comfy Design
+# Comfy（ComfyUI 工作流）
 
-## Plugin marketplaces
+> 本地图、视频、音频与 3D 工作流
 
-This plugin belongs to **AIGC content creation**.
+**版本**：0.5.0 · **许可证**：Apache-2.0 · **技能**：14 个
 
-| Category | Marketplace | Purpose |
-| --- | --- | --- |
-| Full-stack development | [Full Stack Plugins](https://github.com/partme-ai/full-stack-plugins) | Architecture and UI design, code understanding, quality checks, code review, workflow governance, and server operations |
-| AIGC content creation | [Full AIGC Plugins](https://github.com/partme-ai/full-aigc-plugins) | Image, video, audio, music, 3D, and multimodal content creation |
+[English](README.en.md) · [安装](#安装) · [快速开始](#快速开始) · [项目结构](#项目结构)
 
-![Comfy Design — local-first ComfyUI generation](assets/official-logo.png)
+## 项目定位
 
-> Generate images, video, audio and 3D on your own GPU through a local ComfyUI MCP, and escalate to Comfy Cloud only for partner models, registry search and uploads.
+本地优先的 ComfyUI 图像、视频、音频与 3D 工作流；合作伙伴模型与上传仅在显式选择后升级到云端。
 
-[![Version](https://img.shields.io/badge/release-0.6.1%2Bcodex.20261018-1A73E8)](https://github.com/full-aigc-plugins/comfy-design-plugin/releases) [![Skills](https://img.shields.io/badge/skills-14-00A67E)](#skills) [![MCP](https://img.shields.io/badge/MCP%20servers-2-F2FF59)](#mcp-tools) [![License](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
+本插件属于研发工具线，面向需要在真实仓库或真实服务上完成操作、并保留可核验结果的用户。
 
-[English](README.md) | [简体中文](README.zh-CN.md) · [Install](#installation) · [Quick start](#quick-start) · [Skills](#skills) · [MCP tools](#mcp-tools) · [Troubleshooting](#troubleshooting)
+## 一眼看懂
 
-## Positioning
-
-`comfy-design` connects a coding agent to **a ComfyUI instance you run yourself**. Local generation is free, prompts and artifacts stay on your machine, and the hosted Comfy MCP is an opt-in escalation for the cloud-only surface. The plugin never starts ComfyUI for you, never silently switches to a paid path, and never retries a submission whose result is unknown.
-
-The content bodies are vendored from `Comfy-Org/comfy-skills` (MIT) and the local MCP server from `MetaBrain-Labs/ComfyUI-MCP-Server-Python` (MIT) with documented patches. Vendored text is unmodified; only host packaging is added.
-
-## Installation
-
-### Prerequisites
-
-- Python 3.10 or newer for the vendored MCP runtime.
-- A running ComfyUI service, by default at `127.0.0.1:8188`. A LAN host is supported through `COMFY_UI_SERVER_IP`/`HOST`/`PORT` in `vendor/comfyui-mcp-server/.env`.
-- Optional: a `comfyui-` prefixed Comfy Cloud API key, only for the cloud escalation path.
-- A GPU with enough VRAM for the models you intend to run; model files are not bundled.
-
-### One-time local setup
-
-```bash
-python3 scripts/setup_comfy_mcp.py        # create the vendored venv and install locked deps
-python3 scripts/comfy_local_setup.py check # read-only status: venv, target reachability, cloud key
+```text
+仓库 / 服务 / 配置 / 请求
+        │
+        ▼
+Comfy（ComfyUI 工作流） 技能（检查 → 计划 → 执行 → 核验）
+        │
+        ├── MCP 服务
+        └── 固定 CLI / API
+        │
+        ▼
+变更结果 + 证据 + 回退路径
 ```
 
-The host actually launches `scripts/comfy_mcp_bootstrap.py`, which preflights the venv, generates `.env` on first use, checks that the target ComfyUI answers, and only then hands stdio to the vendored server.
+## 能力与边界
 
-### From the plugin marketplace
+| 能力 | 说明 | 边界 |
+|---|---|---|
+| 检查 | 读取当前状态与配置 | 不修改未授权目标 |
+| 计划 | 说明将执行的步骤与影响 | 高风险操作需明确确认 |
+| 执行 | 通过 MCP 或固定工具完成操作 | 不绕过权限与审计 |
+| 核验 | 回读结果、日志与状态 | 命令成功不等于目标达成 |
+| 恢复 | 保留回退路径与证据 | 不确定时不自动重放 |
+
+## 架构与核心流程
+
+```text
+宿主 / Agent
+   │  调用技能
+   ▼
+skills/comfy-design-*  ──►  MCP 服务 / 固定 CLI
+                              │
+                              ▼
+                     目标系统 / 仓库
+                              │
+                              ▼
+                     回读、核验、报告
+```
+
+原则：
+
+1. 先只读检查，再计划，再执行。
+2. 明确目标、范围、凭据和回退方式。
+3. 执行后回读真实现场，不只看退出码。
+4. 不确定时停止并报告，不自动重试有副作用的操作。
+
+## 兼容性
+
+| 项目 | 状态 |
+|---|---|
+| 宿主 | 支持 MCP 的宿主 |
+| 运行时 | 以插件清单与实际安装环境为准 |
+| 平台 | 以发行说明与目标系统为准 |
+
+## 安装
 
 ```bash
 codex plugin marketplace add partme-ai/full-aigc-plugins
 codex plugin add comfy-design@full-aigc-plugins
 ```
 
-Restart the host and open a new task. If the local server cannot start, the bootstrap prints one actionable diagnostic instead of `command not found`.
+安装后重启宿主，先做只读检查。
 
-## Quick start
+## 快速开始
 
-```mermaid
-flowchart LR
-    A[Request] --> B[Local comfy-mcp by default]
-    B --> C{Local capability?}
-    C -->|yes| D[Queue prompt on your GPU]
-    C -->|no| E[Explain cost and ask]
-    E --> F[comfy-cloud escalation]
-    D --> G[Save assets locally]
-    F --> H[Download signed URL, verify locally]
-    G --> I[Verified local artifact]
-    H --> I
-```
+1. 确认目标、环境、权限和影响范围。
+2. 只读检查现状，记录基线。
+3. 执行一次有界变更。
+4. 回读目标状态、日志和关键指标。
+5. 保存证据；失败时按回退路径恢复。
 
-```text
-Generate an image of a ceramic teapot on a linen table with soft morning light,
-using my local ComfyUI. Show the workflow you picked and save the result to my output folder.
-```
+## 配置
 
-Expected observation: `get_system_status` confirms the service and VRAM, the workflow is queued locally, and the artifact lands in the directory you named. No credits are consumed.
+按插件文档配置 MCP 地址、认证方式和目标环境。不要把令牌、密码或私钥写入仓库。
 
-## What you can build
+## 扩展契约
 
-| Workflow | Built-in path | Verifiable output |
-| --- | --- | --- |
-| Text-to-image and edits | `comfy-generate-image`, `comfy-design-loop` | Local image files plus the workflow used |
-| Video generation | `comfy-generate-video` | Local video artifact |
-| Audio and 3D | `comfy-generate-audio`, `comfy-generate-3d` | Local audio or mesh artifact |
-| Utility passes | `comfy-upscale-image`, `comfy-remove-background`, `technique-combine-people` | Processed image files |
-| Discover what is installed | `comfy-search-models`, `comfy-search-nodes`, `comfy-search-templates`, `comfy-help` | Model, node and workflow inventories |
+新增技能时应使用 `comfy-design-` 前缀，声明触发条件、权限边界和失败处理，通过 MCP 或固定工具执行，并在变更后回读核验。
 
-## Skills
+## 重试、幂等与恢复
 
-| Skill | What it does |
-| --- | --- |
-| `comfy-generate-image` | Generates, edits or modifies an image through Comfy. |
-| `comfy-generate-video` | Generates, edits or extends a video through Comfy. |
-| `comfy-generate-audio` | Generates speech or sound effects through Comfy. |
-| `comfy-generate-3d` | Generates a 3D model through Comfy. |
-| `comfy-upscale-image` | Upscales an image. |
-| `comfy-remove-background` | Removes an image background. |
-| `technique-combine-people` | Composites the user's photo with another person into one image. |
-| `comfy-search-models` | Searches available models. |
-| `comfy-search-nodes` | Searches nodes with wiring hints. |
-| `comfy-search-templates` | Finds pre-built workflow templates. |
-| `comfy-help` | Explains what the Comfy tool surface can do. |
-| `comfy-local-setup` | Configures the target host, the optional cloud key and the local runtime. |
-| `comfy-harness` | Invocation spec: local-first routing, cloud-to-local tool mapping, cost gates and submit-once. |
-| `comfy-design-loop` | Multi-round quality loop against an anchored target image with an independent rubric review. |
+- 失败后先检查目标当前状态。
+- 不自动重放已产生副作用的操作。
+- 重试前确认幂等条件与回退路径。
+- 保留命令、日志和结果证据。
 
-## Slash commands
+## 数据与状态
 
-| Command | What it does |
-| --- | --- |
-| `/comfy-generate-image` | Generate, edit or modify an image. |
-| `/comfy-generate-video` | Generate, edit or extend a video. |
-| `/comfy-generate-audio` | Generate audio. |
-| `/comfy-generate-3d` | Generate a 3D model. |
-| `/comfy-upscale-image` | Upscale an image. |
-| `/comfy-remove-background` | Remove an image background. |
-| `/comfy-combine-people` | Composite multiple people into one image. |
-| `/comfy-search-models` | Search the model catalog. |
-| `/comfy-search-nodes` | Search nodes with wiring hints. |
-| `/comfy-search-templates` | Find workflow templates. |
-| `/comfy-help` | Show what the tool surface can do. |
-| `/comfy-local-setup` | Configure the target host, cloud key and runtime self-check. |
+- 凭据只从安全配置读取。
+- 变更前后的状态分别记录。
+- 不把生产数据复制到不受控目录。
 
-## MCP tools
+## 安全
 
-`mcp.json` declares two servers: `comfy-mcp` (stdio, your machine, **default**) and `comfy-cloud` (hosted HTTPS, **escalation only**).
+- 遵循最小权限原则。
+- 高风险操作必须明确确认。
+- 发现凭据泄露先轮换，再清理痕迹。
+- 不绕过审计、权限或分支保护。
 
-| Server | Real tools (selection) | Notes |
-| --- | --- | --- |
-| `comfy-mcp` | `get_system_status`, `list_models`, `get_workflows_catalog`, `mount_workflow`, `queue_prompt`, `get_prompt_result`, `save_task_assets`, `interrupt_prompt` | 17 local tools in total, including `queue_custom_prompt`, `save_custom_workflow`, `upload_assets`, `free_memory` and `list_local_templates` |
-| `comfy-cloud` | `search_models`, `search_nodes`, `search_templates`, `submit_workflow`, `get_job_status`, `get_output`, `upload_file`, `run_template`, `partner_generate` | Requires a `comfyui-` API key or OAuth; generation is billed |
+## 可观测性与运行
 
-Local generation writes files directly. The cloud path returns a signed URL and a ready-to-run `curl`; execute it verbatim, then verify the downloaded file locally.
+记录命令、目标、时间、结果和关键指标；交付前回读一次真实状态。
 
-## Configuration
-
-| Setting | Location | Notes |
-| --- | --- | --- |
-| ComfyUI target | `vendor/comfyui-mcp-server/.env` | `COMFY_UI_SERVER_IP`/`HOST`/`PORT`, default `127.0.0.1:8188` |
-| Local setup form | `python3 scripts/comfy_local_setup.py ui` | `http://127.0.0.1:8192`; writes the target and a restricted user config |
-| Cloud API key | Host secret store or `COMFY_API_KEY` | Optional; never commit it and never paste it into chat |
-| Vendored venv | `vendor/comfyui-mcp-server/.venv` | Created by `scripts/setup_comfy_mcp.py` |
-
-## Architecture and security
-
-The plugin owns host adapters, configuration injection, scripts and its two local Skills. ComfyUI owns rendering; Comfy-Org owns the vendored content; the authors receive no prompt or artifact.
-
-- The default path is local, so prompts and outputs leave neither the machine nor the LAN target you configured.
-- The optional HTTP transport has **no authentication** and binds `127.0.0.1` only; exposing it requires your own authenticated gateway.
-- Cloud escalation is announced with its cost before it happens; named partner models exist only in the cloud.
-- A submitted `prompt_id` is persisted before polling. Unknown or failed results are reported, never automatically resubmitted.
-
-## Troubleshooting
-
-| Symptom | Check first | Resolution |
-| --- | --- | --- |
-| Local MCP does not start | Bootstrap stderr preflight | Missing venv → `python3 scripts/setup_comfy_mcp.py` |
-| Target unreachable | ComfyUI process and `.env` | Start ComfyUI first; the plugin will not launch it |
-| A named model is refused locally | Local model inventory | That model is cloud partner-only; approve the escalation or pick a local model |
-| Cloud calls fail | API key and subscription | Use `codex mcp login comfy-cloud` or a `comfyui-` key with credits |
-| Workflow catalog is empty | Background scan still running | Wait, or submit API JSON through `queue_custom_prompt` |
-| A long job blocks | Sync/async choice | Short jobs stay synchronous; video and upscale need `is_async: "true"` |
-
-## Upgrade
+## 开发与验证
 
 ```bash
-codex plugin marketplace upgrade full-aigc-plugins
-codex plugin add comfy-design@full-aigc-plugins
+node --test
+python3 -m pytest
 ```
 
-After upgrading, re-run `python3 scripts/comfy_local_setup.py check` and the vendored skill check, because the pinned upstream revision and the MCP patch set are versioned with the plugin.
+## 打包与发布
 
-Current packaged version: `0.6.1+codex.20261018` (development preview).
+版本与清单、市场、tag 一致；发布后重新安装并做一次只读检查。
 
-## Contributing and support
+## 升级与迁移
 
-Open functional issues at <https://github.com/full-aigc-plugins/comfy-design-plugin/issues>. State the ComfyUI version, the target host shape (local or LAN) and whether the change touches the vendored server or only the adapter. Do not edit vendored bodies directly.
+升级前备份配置与状态；确认兼容性；迁移后重新核验连接和权限。
 
-## License
+## 故障排查
 
-Apache-2.0 for the adapter code. Vendored skill and command content is MIT from Comfy-Org — see [NOTICE](NOTICE), `upstream/comfy-skills.lock.json` and `vendor/comfyui-mcp-server/PATCHES.md`.
+| 现象 | 检查 |
+|---|---|
+| 连接失败 | 地址、网络、认证 |
+| 权限不足 | 账号角色与令牌范围 |
+| 操作无效果 | 回读目标状态与日志 |
+| 结果不确定 | 停止重试，先核对现场 |
+
+## 项目结构
+
+```text
+comfy-design-plugin/
+├── .zcode-plugin/      # ZCode 清单
+├── .codex-plugin/      # Codex 清单
+├── skills/             # 14 个技能
+├── docs/               # 架构与验证记录
+└── assets/             # 图标与静态资源
+```
+
+## 贡献与支持
+
+提交问题时附上插件版本、宿主、目标环境、命令、日志和预期结果。不要附凭据或生产数据。
+
+## 许可证
+
+Apache-2.0，见 [LICENSE](LICENSE)。

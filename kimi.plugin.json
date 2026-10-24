@@ -1,7 +1,7 @@
 {
   "name": "comfy-design",
   "version": "0.5.0",
-  "description": "Local-first ComfyUI workflows for images, video, audio and 3D. Partner models and uploads escalate to Comfy Cloud only when opted in.",
+  "description": "本地优先的 ComfyUI 图像、视频、音频与 3D 工作流；合作伙伴模型与上传仅在显式选择后升级到云端。",
   "author": {
     "name": "Full Stack Skills / PartMe.AI"
   },
@@ -13,8 +13,8 @@
     "workflow"
   ],
   "interface": {
-    "displayName": "Comfy Design · ComfyUI Workflows",
-    "shortDescription": "Local image, video, audio and 3D workflows",
+    "displayName": "Comfy（ComfyUI 工作流）",
+    "shortDescription": "本地图、视频、音频与 3D 工作流",
     "longDescription": "Generate images, video, audio, and 3D on your own GPU through the local ComfyUI MCP (comfy-mcp), and escalate to the hosted Comfy MCP (comfy-cloud) only for partner models and uploads.",
     "developerName": "Full Stack Skills / PartMe.AI",
     "websiteURL": "https://github.com/full-aigc-plugins/comfy-design-plugin"
@@ -44,5 +44,11 @@
       "command": "python3 ./hooks/check_comfy_intent.py",
       "timeout": 15
     }
-  ]
+  ],
+  "displayName_i18n": {
+    "zh-CN": "Comfy（ComfyUI 工作流）"
+  },
+  "description_i18n": {
+    "zh-CN": "本地优先的 ComfyUI 图像、视频、音频与 3D 工作流；合作伙伴模型与上传仅在显式选择后升级到云端。"
+  }
 }

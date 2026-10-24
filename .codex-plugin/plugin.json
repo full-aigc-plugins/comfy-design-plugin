@@ -1,7 +1,7 @@
 {
   "name": "comfy-design",
   "version": "0.5.0",
-  "description": "Local-first ComfyUI workflows for images, video, audio and 3D. Partner models and uploads escalate to Comfy Cloud only when opted in.",
+  "description": "本地优先的 ComfyUI 图像、视频、音频与 3D 工作流；合作伙伴模型与上传仅在显式选择后升级到云端。",
   "author": {
     "name": "Full Stack Skills / PartMe.AI",
     "url": "https://github.com/partme-ai"
@@ -42,5 +42,12 @@
     ],
     "composerIconDark": "./assets/official-logo.png"
   },
-  "mcpServers": "./.mcp.json"
+  "mcpServers": "./.mcp.json",
+  "displayName": "Comfy（ComfyUI 工作流）",
+  "displayName_i18n": {
+    "zh-CN": "Comfy（ComfyUI 工作流）"
+  },
+  "description_i18n": {
+    "zh-CN": "本地优先的 ComfyUI 图像、视频、音频与 3D 工作流；合作伙伴模型与上传仅在显式选择后升级到云端。"
+  }
 }

@@ -17,13 +17,14 @@
       },
       "category": "Creativity",
       "version": "0.5.0",
-      "description": "Local-first ComfyUI workflows for images, video, audio and 3D. Partner models and uploads escalate to Comfy Cloud only when opted in.",
+      "description": "本地优先的 ComfyUI 图像、视频、音频与 3D 工作流；合作伙伴模型与上传仅在显式选择后升级到云端。",
       "icon": "https://cdn.jsdelivr.net/gh/full-aigc-plugins/comfy-design-plugin@v0.5.0/assets/official-logo.png",
       "interface": {
-        "displayName": "Comfy Design · ComfyUI Workflows",
-        "shortDescription": "Local image, video, audio and 3D workflows",
+        "displayName": "Comfy（ComfyUI 工作流）",
+        "shortDescription": "本地图、视频、音频与 3D 工作流",
         "logo": "https://cdn.jsdelivr.net/gh/full-aigc-plugins/comfy-design-plugin@v0.5.0/assets/official-logo.png"
-      }
+      },
+      "displayName": "Comfy（ComfyUI 工作流）"
     }
   ]
 }

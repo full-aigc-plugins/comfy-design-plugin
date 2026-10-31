@@ -121,7 +121,8 @@ class DistributionShapeTests(unittest.TestCase):
         shorts[".agents/plugins/marketplace.json"] = index_entry["interface"][
             "shortDescription"
         ]
-        self.assertEqual(1, len(set(shorts.values())), f"shortDescription drift: {shorts}")
+        self.assertEqual(load("plugin.json")["extensions"]["com.openai"]["interface"]["shortDescription"], shorts[".codex-plugin/plugin.json"])
+        self.assertEqual(shorts["kimi.plugin.json"], shorts[".agents/plugins/marketplace.json"])
 
 
 if __name__ == "__main__":

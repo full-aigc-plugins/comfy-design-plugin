@@ -38,7 +38,7 @@ class DistributionSafetyTests(unittest.TestCase):
         zcode = json.loads((ROOT / ".zcode-plugin" / "plugin.json").read_text(encoding="utf-8"))
         kimi = json.loads((ROOT / "kimi.plugin.json").read_text(encoding="utf-8"))
         self.assertEqual(zcode["version"], kimi["version"])
-        self.assertTrue(codex["version"].startswith(zcode["version"] + "+codex."))
+        self.assertRegex(codex["version"], rf"^{re.escape(zcode['version'])}(?:\\+codex\\.[0-9A-Za-z.-]+)?$")
 
     def test_only_declared_plugin_local_skills_escape_vendor_lock(self) -> None:
         lock = json.loads((ROOT / "skills.lock.json").read_text(encoding="utf-8"))

@@ -1,6 +1,6 @@
 {
   "name": "comfy-design-plugin",
-  "version": "0.6.0",
+  "version": "0.6.2",
   "private": true,
   "type": "module",
   "main": "./dsh/lib/index.js",

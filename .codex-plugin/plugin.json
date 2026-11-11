@@ -1,6 +1,6 @@
 {
   "name": "comfy-design",
-  "version": "0.6.2+codex.20261109",
+  "version": "0.6.3+codex.20261111",
   "description": "一条链路跑完本地 ComfyUI 图、视频、音频与 3D 工作流；云模型只在你明确选择时启用。",
   "author": {
     "name": "Full Stack Skills / PartMe.AI",

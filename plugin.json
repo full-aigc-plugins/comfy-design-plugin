@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "comfy-design",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "一条链路跑完本地 ComfyUI 图、视频、音频与 3D 工作流；云模型只在你明确选择时启用。",
   "author": {
     "name": "Full Stack Skills / PartMe.AI",
